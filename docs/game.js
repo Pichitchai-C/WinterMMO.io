@@ -84,7 +84,7 @@ else if(l>.1&&p.ch<=0){p.mv=1;const s=SP()*(p.fast>0?1.4:1)*(inC()?1.15:1);p.x+=
 p.x=M.max(8,M.min((g.sc?g.sc.w:WW)-8,p.x));p.y=M.max(g.sc?24:8,M.min((g.sc?g.sc.h:WH)-8,p.y));
 if(ah||K[KB.atk])atk();
 const nt=dark()>.3,bs=g.en.find(e=>e.boss);if(!nt)g.bk=0;const bq=p.q&&p.q.id==2&&!p.q.done;if(false)g.en.push({t:'boss',boss:1,x:LAIR.x,y:LAIR.y+20,hp:BH(),mh:BH(),ar:100,sp:48,d:25*(1+.08*(DY()-1)),xp:250,gd:300,sl:0,stun:0,cd:0});if(!nt&&bs&&!bq)g.en=g.en.filter(e=>!e.boss);
-g.en=g.en.filter(e=>!e.dead);if(g.sc&&g.sc.dg&&!g.sc.cl&&!g.en.some(e=>e.el)){g.sc.cl=1;if(g.sc.dg.f<g.sc.dg.N){g.sc.n.push(['stairs','บันไดลงชั้นถัดไป',160,28]);say('เคลียร์ชั้นนี้แล้ว! บันไดปรากฏ')}}if(false){g.sp=3;if(g.en.filter(e=>!e.boss&&!e.el).length<44)spawn()}
+g.en=g.en.filter(e=>!e.dead);if(false){g.sc.cl=1;if(g.sc.dg.f<g.sc.dg.N){g.sc.n.push(['stairs','บันไดลงชั้นถัดไป',160,28]);say('เคลียร์ชั้นนี้แล้ว! บันไดปรากฏ')}}if(false){g.sp=3;if(g.en.filter(e=>!e.boss&&!e.el).length<44)spawn()}
 for(const e of g.en){if(e.pv)continue;if(e.sv){e.cd-=dt;e.sl-=dt;if(e.stun>0)e.stun-=dt;continue}e.cd-=dt;e.sl-=dt;out(e);if(e.guard)bai(e,dt);if(e.stun>0){e.stun-=dt;continue}const T=g.vl&&D(e,g.vl)<D(e,p)?g.vl:p,d=D(T,e);if(d<(e.boss?400:240)&&d>10){const s=e.sp*(e.sl>0?.5:1)*dt;e.x+=(T.x-e.x)/d*s;e.y+=(T.y-e.y)/d*s}
 if(d<12&&e.cd<=0){e.cd=1;const m=e.d*(nt?1.3:1);if(T===p){dmgp(m);if(sm('th')){e.hp-=m*sm('th');if(e.hp<=0&&!e.dead){e.dead=1;kill(e)}}if(p.hp<=0)die()}else T.hp-=m}}
 const q=p.q;if(q&&QS[q.id].k=='esc'&&!q.done&&!g.vl)g.vl={x:p.x-10,y:p.y,hp:60};if(!(q&&QS[q.id].k=='esc'))g.vl=null;
@@ -329,8 +329,6 @@ const dgm=id=>()=>{const d=DGS[id];if(NET.party&&NET.party.ld!=NET.id)return say
 NP.cave=dgm('cave');NP.dg2=dgm('dg2');NP.dg3=dgm('dg3');
 function dgGo(id,f,fol){if(!fol&&NET.party&&NET.party.ld==NET.id)NET.send({t:'dg',id,f});const d=DGS[id],p=g.p,b=BD.find(b=>b[0]==id),o=g.sc?g.sc.ex:{x:npc(b).x,y:npc(b).y+12},sv=g.sc?g.sc.sv:g.en,m=d.lv*(1+.08*(DY()-1))*(1+f*.2);
 g.sc={k:id,name:d.n+' ชั้น '+f+'/'+d.fl,w:320,h:220,c:d.c,n:[['exit','ทางออก',160,208]],ex:o,sv,dg:{id,f,N:d.fl},cl:0};g.en=[];pr=[];ZN.length=0;g.cir=null;
-for(let i=0;i<4+f;i++){const e=Object.assign({x:30+R()*260,y:40+R()*110,sl:0,stun:0,cd:0,ph:R()*6,el:1},ST[M.min(3,d.t+(f>1?1:0))]);e.hp=e.mh=e.mh*m|0;e.d*=.6+.4*m;e.xp=e.xp*m|0;e.gd=e.gd*m|0;g.en.push(e)}
-if(f==d.fl){const e=Object.assign({x:160,y:50,sl:0,stun:0,cd:0,ph:0,el:1,guard:1,big:1,gk:id},ST[3]);e.hp=e.mh=e.mh*(7+d.lv*3)*(1+.1*(DY()-1))|0;e.ar=110;e.d*=1.3+d.lv*.3;e.xp*=4;e.gd*=6;g.en.push(e)}
 p.x=160;p.y=190;say(g.sc.name)}
 function dgDone(){const s=g.sc,p=g.p;if(!s||!s.dg)return;const d=DGS[s.dg.id],pool=d.pool.filter(k=>!p.it.includes(k));let m;if(pool.length&&p.it.length<6){const k=pool[R()*pool.length|0];p.it.push(k);m=IT[k][0]}else{p.gd+=1500;m='1500 ทอง'}p.gd+=400*d.lv|0;gain(300*d.lv|0);say('ชนะผู้พิทักษ์! ได้ '+m);s.cl=1}
 function dsc(){const s=g.sc,dg=s.dg;rc('#120e16',-60,-60,s.w+120,s.h+120);rc(s.c,0,0,s.w,s.h);for(let j=0;j<s.h;j+=16)rc('rgba(0,0,0,.12)',0,j,s.w,1);for(let i=0;i<s.w;i+=32)rc('rgba(0,0,0,.08)',i,0,1,s.h);
@@ -375,7 +373,7 @@ function ndie(){const p=g.p,b=Object.keys(NET.by).filter(k=>g.t-NET.by[k]<12).ma
 function adie(){const p=g.p;NET.send({t:'adie'});NET.am.dead=1;p.hp=MH();p.x=ARN.x-30;p.y=ARN.y+ARN.h/2;p.inv=999;say('คุณแพ้รอบนี้ รอผลแมตช์')}
 function ntick(dt){const p=g.p;if(NET.gt!=null)g.t=NET.gt+(performance.now()-NET.gt0)/1000;if(p.pvt>0){p.pvt-=dt;if(p.pvt<=0){p.pvp=0;say('ปิด PvP แล้ว')}}
 Object.values(NET.ps).forEach(r=>{r.dx+=(r.x-r.dx)*.25;r.dy+=(r.y-r.dy)*.25});pvsync();msync();
-if((NET.tk-=dt)<=0&&NET.ok){NET.tk=.125;NET.send({t:'st',s:{x:+p.x.toFixed(1),y:+p.y.toFixed(1),sc:sk(),hero:hr(),lv:p.lv,hp:p.hp|0,mh:MH()|0,mp:p.mp|0,mm:MM()|0,pv:p.pvp?1:0,a:+p.a.toFixed(2),am:NET.am&&!NET.am.dead?NET.am.team+1:0,gd:p.gd,it:p.it,pg:NET.ping,fl:(p.kg>0?1:0)|(p.kw>0?2:0)|(p.bs?4:0)|(p.s1>0?8:0)|(p.form?16:0)|(p.ch>0?32:0)|(p.hold?64:0)}})}}
+if((NET.tk-=dt)<=0&&NET.ok){NET.tk=.125;NET.send({t:'st',s:{x:+p.x.toFixed(1),y:+p.y.toFixed(1),sc:sk(),hero:hr(),lv:p.lv,hp:p.hp|0,mh:MH()|0,mp:p.mp|0,mm:MM()|0,pv:p.pvp?1:0,a:+p.a.toFixed(2),am:NET.am&&!NET.am.dead?NET.am.team+1:0,gd:p.gd,it:p.it,pg:NET.ping,vl:(g.vl&&!g.sc?{x:+g.vl.x.toFixed(1),y:+g.vl.y.toFixed(1)}:null),fl:(p.kg>0?1:0)|(p.kw>0?2:0)|(p.bs?4:0)|(p.s1>0?8:0)|(p.form?16:0)|(p.ch>0?32:0)|(p.hold?64:0)}})}}
 function tag(X,Y,n,hp,mh,mp,mm,col){const px=(X-cx)*S,py=(Y-24-cy)*S,w=20*S,h=2.4*S;x.font='bold '+5.5*S+'px sans-serif';x.textAlign='center';x.lineWidth=2;x.strokeStyle='#000';x.fillStyle=col||'#fff';x.strokeText(n,px,py-3*S);x.fillText(n,px,py-3*S);x.textAlign='left';x.fillStyle='#000a';x.fillRect(px-w/2-1,py-1,w+2,h*2+2);x.fillStyle='#c0283c';x.fillRect(px-w/2,py,w*M.max(0,M.min(1,hp/mh)),h);x.fillStyle='#4aa3ff';x.fillRect(px-w/2,py+h,w*M.max(0,M.min(1,mp/mm)),h*.8)}
 function ndraw(){const k=sk();Object.values(NET.ps).forEach(r=>{if(r.sc!=k)return;const bb=M.abs(r.x-r.dx)>.5?-M.abs(M.sin(g.t*14))*1.3:M.sin(g.t*3)*.3,F=M.cos(r.a)<0;if(r.hero&&r.hero!='w')hman(r.dx,r.dy,r.hero,bb,F);else{const c=hcol({hero:'w',form:(r.fl&16)?1:0});man(r.dx,r.dy,c[0],c[1],c[2],bb,F,c[3])}raura(r);tag(r.dx,r.dy,r.n+' Lv'+r.lv,r.hp,r.mh,r.mp,r.mm,pids().includes(r.id)?'#7aff7a':r.pv?'#ff7a7a':'#fff')})}
 function arenaDraw(){rc('#4a2a2a',ARN.x,ARN.y,ARN.w,ARN.h);[[0,0,ARN.w,3],[0,ARN.h-3,ARN.w,3],[0,0,3,ARN.h],[ARN.w-3,0,3,ARN.h]].forEach(a=>rc('#c0283c',ARN.x+a[0],ARN.y+a[1],a[2],a[3]));rc('#6a3a3a',ARN.x+ARN.w/2-1,ARN.y,2,ARN.h)}
@@ -398,7 +396,10 @@ case'ss':NET.gt=m.gt;NET.gt0=performance.now();{const seen={};m.l.forEach(a=>{co
 case'pl':NET.pl=m.l;NET.bt=m.bt;break;case'fx':if(g)rfx(m);break;case'ms':NET.ms=m.l;break;
 case'md':if(g&&!g.sc){dmgp(m.d);const th=sm('th');if(th)NET.send({t:'mh',id:m.id,d:m.d*th|0});if(p.hp<=0)die()}break;
 case'mx':{NET.kd[m.id]=1;if(Object.keys(NET.kd).length>300)NET.kd={};const e=g&&g.en.find(z=>z.mid==m.id);if(e){dfx(e);e.dead=1}}break;
-case'mk':if(g)mkrew(m);break;case'chat':NET.chat.push([m.n,m.m]);if(NET.chat.length>50)NET.chat.shift();if(g)say(m.n+': '+m.m);break;case'msg':if(g)say(m.m);break;case'hit':if(g)rhit(m);break;
+case'mk':if(g)mkrew(m);break;
+case'vd':if(g&&g.vl)g.vl.hp-=m.d;break;case'dw':if(g&&g.sc&&g.sc.dg)dgDone();break;
+case'fc':if(g&&g.sc&&g.sc.dg&&!g.sc.cl){g.sc.cl=1;if(g.sc.dg.f<g.sc.dg.N){g.sc.n.push(['stairs','บันไดลงชั้นถัดไป',160,28]);say('เคลียร์ชั้นนี้แล้ว! บันไดปรากฏ')}}break;
+case'dz':if(g&&g.sc&&g.sc.dg)DZ.push({x:m.x,y:m.y,r:m.r,t:m.tt,d:m.d,c:m.c,sl:m.sl});break;case'chat':NET.chat.push([m.n,m.m]);if(NET.chat.length>50)NET.chat.shift();if(g)say(m.n+': '+m.m);break;case'msg':if(g)say(m.m);break;case'hit':if(g)rhit(m);break;
 case'rew':if(g){p.gd+=m.gd;say(m.m)}break;case'sh':if(g){p.gd+=m.gd;gain(m.xp);say('แชร์รางวัลปาร์ตี้ +'+m.gd+'g +'+m.xp+'xp')}break;
 case'pinv':if(g)dlg('เชิญเข้าปาร์ตี้',m.n+' เชิญคุณเข้าปาร์ตี้',[['รับ',()=>{NET.send({t:'pacc',from:m.from});cl()}],['ปฏิเสธ',cl]]);break;
 case'party':NET.party=m.ld?{ld:m.ld,m:m.m}:null;break;
@@ -411,7 +412,7 @@ case'tx':if(NET.tr){NET.tr=null;if(g){cl();say(m.m||'ยกเลิกการ
 case'am':if(g){NET.am={team:m.team,dead:0};NET.aq=0;if(g.sc)leave(1);p.x=m.sp.x;p.y=m.sp.y;p.hp=MH();p.mp=MM();p.inv=3;p.cd=[0,0,0,0];say('แมตช์เริ่ม! คุณอยู่ทีม'+(m.team?'น้ำเงิน':'แดง'))}break;
 case'aend':if(g){const w=m.win==NET.am.team;NET.am=null;p.inv=0;p.hp=MH();p.x=ARN.x+ARN.w/2;p.y=ARN.y-30;say(w?'ทีมคุณชนะ!':'ทีมคุณแพ้')}break}}
 const nfx=o=>NET.send({t:'fx',e:o}),MTN=['imp','wolf','ghoul','wraith','boss'];
-function msync(){if(g.sc)return;const ids={};NET.ms.forEach(a=>{if(NET.kd[a[0]])return;ids[a[0]]=1;let e=g.en.find(z=>z.mid==a[0]);if(!e){e={sv:1,mid:a[0],t:MTN[a[1]],x:a[2],y:a[3],hp:a[4],mh:a[5],sp:0,d:0,xp:0,gd:0,sl:0,stun:0,cd:0,ph:a[0]%7,ar:0,boss:a[1]==4?1:0,ps:0,pl:0};g.en.push(e)}
+function msync(){if(g.sc&&!g.sc.dg)return;const ids={};NET.ms.forEach(a=>{if(NET.kd[a[0]])return;ids[a[0]]=1;let e=g.en.find(z=>z.mid==a[0]);if(!e){e={sv:1,mid:a[0],t:MTN[a[1]],x:a[2],y:a[3],hp:a[4],mh:a[5],sp:0,d:0,xp:0,gd:0,sl:0,stun:0,cd:0,ph:a[0]%7,ar:0,boss:a[1]==4?1:0,big:(a[6]&4)?1:0,ps:0,pl:0};g.en.push(e)}
 if(e.stun>e.ps+.05||e.sl>e.pl+.05)NET.send({t:'cc',id:e.mid,st:e.stun,sl:e.sl});e.hp=a[4];e.mh=a[5];e.ar=a[7];if(a[6]&1&&e.stun<.3)e.stun=.3;e.x+=(a[2]-e.x)*.4;e.y+=(a[3]-e.y)*.4;e.ps=e.stun;e.pl=e.sl});g.en=g.en.filter(e=>!e.sv||ids[e.mid])}
 function mkrew(m){const p=g.p,q=p.q,gd=m.gd*.55*m.pct*(1+sm('gb'))|0,xp=m.xp*m.pct|0;p.gd+=gd;gain(xp);sfx('x');
 if(q&&!q.done){const s=QS[q.id];if((s.k=='kill'&&!m.boss&&(!s.t||s.t==m.mt))||(s.k=='boss'&&m.boss)){q.pr++;if(q.pr>=s.need){q.done=1;say(s.c==3?'เควสสำเร็จ! กลับไปหาชาวบ้าน':'เควสสำเร็จ! กลับไปส่งที่กิลด์')}}}
