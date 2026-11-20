@@ -391,7 +391,7 @@ case'err':login(m.m);break;
 case'ok':NET.id=m.id;NET.gt=m.gt;NET.gt0=performance.now();me=NET.name;{const s=m.save;g=fresh();if(m.prof){Object.assign(g.p,(s&&s.p)||{},{ch:0,s1:0,dash:null,form:0,bt:0,fast:0,hb:0,hold:0,cd:[0,0,0,0],bs:null,rc:null,kg:0,kw:0,inv:3,pvt:0},HTR);applyProf(m.prof);g.t=m.gt;go()}else pick()}break;
 case'ss':NET.gt=m.gt;NET.gt0=performance.now();{const seen={};m.l.forEach(a=>{const r=NET.ps[a[0]]||(NET.ps[a[0]]={dx:a[2],dy:a[3]});Object.assign(r,{id:a[0],n:a[1],x:a[2],y:a[3],sc:a[4],hero:a[5],lv:a[6],hp:a[7],mh:a[8],mp:a[9],mm:a[10],pv:a[11],a:a[12],am:a[13],fl:a[14]||0});seen[a[0]]=1});for(const k in NET.ps)if(!seen[k])delete NET.ps[k]}break;
 case'pl':NET.pl=m.l;NET.bt=m.bt;break;case'fx':if(g)rfx(m);break;case'ms':NET.ms=m.l;break;
-case'md':if(g&&!g.sc){dmgp(m.d);const th=sm('th');if(th)NET.send({t:'mh',id:m.id,d:m.d*th|0});if(p.hp<=0)die()}break;
+case'md':if(g&&(!g.sc||g.sc.dg)){dmgp(m.d);const th=sm('th');if(th)NET.send({t:'mh',id:m.id,d:m.d*th|0});if(p.hp<=0)die()}break;
 case'mx':{NET.kd[m.id]=1;if(Object.keys(NET.kd).length>300)NET.kd={};const e=g&&g.en.find(z=>z.mid==m.id);if(e){dfx(e);e.dead=1}}break;
 case'mk':if(g)mkrew(m);break;
 case'prof':if(g)applyProf(m.p);break;case'er':if(g){NET.rr=null;say(m.m)}break;case'data':applyData(m.d);break;
@@ -450,7 +450,11 @@ addEventListener('keyup',e=>{K[e.key.toLowerCase()]=0;if(g){const k2=e.key.toLow
 
 /* ---------- 1) ระบบทั่วไป ---------- */
 // ค่าสถานะชั่วคราวของฮีโร่ (รีเซ็ตตอนโหลดเซฟ / เปลี่ยนตัว / ตาย)
-const HTR={ve:0,vt:0,hs1:0,hsp:0,db:null,ca:0,fz:null,sh:null,ec:0,em:0,ep:0,fm:0,kn:0,kh:0,kp:0,kas:0,ksa:0,od:0,odt:0,ci:0,cit:0,hasb:0};
+const HTR={da:null,ve:0,vt:0,hs1:0,hsp:0,db:null,ca:0,fz:null,sh:null,ec:0,em:0,ep:0,fm:0,kn:0,kh:0,kp:0,kas:0,ksa:0,od:0,odt:0,ci:0,cit:0,hasb:0};
+// ออร่า Dreadful Presence ของ Heavy Knight: dur = ระยะเวลา(วิ) tick = ทุกกี่วิ pct = ดาเมจเวทต่อ tick เป็น % ของ Max HP r = รัศมี(px)
+const HKA={dur:4,tick:.5,pct:.06,r:72};
+// พายุสายฟ้าของ Decibus (Skill 3): r = รัศมี  waves/wavesOC = จำนวนระลอก (ปกติ/Overcharge)  gap = ห่างระลอก(วิ)  w = ดาเมจต่อระลอก (×A)  fin/finOC = ระลอกสุดท้าย (×A) ปกติ/Overcharge
+const DST3={r:80,waves:5,wavesOC:8,gap:.4,w:.55,fin:2.4,finOC:4.3};
 // ศัตรูระดับ "ฮีโร่" (ใช้แทน enemy hero ในโหมด PvE): บอส, ตัวใหญ่, ผีดิบขึ้นไป
 const ISH=e=>!!(e.pv||e.boss||e.big||e.wb||e.guard||ST.findIndex(s=>s.t==e.t)>=2);
 // กำนันกูชาร์จสกิลแล้วเดินไม่ได้
@@ -459,7 +463,7 @@ const kblk=p=>p.hero=='g'&&((p.kn==1&&p.fm)||(p.kn==2&&!p.fm));
 // ฟันเป็นกรวยด้านหน้า คืนจำนวนศัตรูที่โดน
 function cone(a,r,half,d,mg,pp){let n=0;const p=g.p;g.en.forEach(z=>{if(z.dead)return;const dx=z.x-p.x,dy=z.y-p.y;if(M.hypot(dx,dy)>=r)return;const q=M.atan2(dy,dx);if(M.abs(M.atan2(M.sin(q-a),M.cos(q-a)))<half){hit(z,d,0,mg,pp);n++}});return n}
 
-function hudx(p){const h=p.hero;return(h=='h'?' ✝'+(p.ve||0)+'/4':'')+(h=='d'?' ⚡'+(p.ec||0)+'/5':'')+(h=='n'?' ⚙'+(p.em?'Burst':'MG')+(g.cal&&g.cal.n?' ◎'+g.cal.n:''):'')+(h=='g'?(p.fm?' 🌑มืด':' ☀แสง'):'')+(h=='p'?' 👊'+(p.ci||0)+(p.od?' ⚡Lv'+p.od:''):'')+(p.fz?' 🛡'+M.ceil(p.fz.t):'')+(p.db?' ✨'+M.ceil(p.db.t):'')+(p.ep>0?' 🎯'+M.ceil(p.ep):'')}
+function hudx(p){const h=p.hero;return(h=='h'?' ✝'+(p.ve||0)+'/4':'')+(h=='d'?' ⚡'+(p.ec||0)+'/5':'')+(h=='n'?' ⚙'+(p.em?'Burst':'MG')+(g.cal&&g.cal.n?' ◎'+g.cal.n:''):'')+(h=='g'?(p.fm?' 🌑มืด':' ☀แสง'):'')+(h=='p'?' 👊'+(p.ci||0)+(p.od?' ⚡Lv'+p.od:''):'')+(p.fz?' 🛡'+M.ceil(p.fz.t):'')+(p.da?' 👁'+M.ceil(p.da.t):'')+(p.db?' ✨'+M.ceil(p.db.t):'')+(p.ep>0?' 🎯'+M.ceil(p.ep):'')}
 
 /* ---------- 2) (MMO) ลูท/บอสโลกคำนวณที่เซิร์ฟเวอร์ — ฝั่งเกมมีแค่สีบอสสำหรับวาด ---------- */
 const BBP={pharaoh:{R:'#8a6a10',K:'#2a1a05',Y:'#fff0a0'},titan:{R:'#1f6a2a',K:'#07140a',Y:'#d6ff5a'}};
@@ -505,10 +509,10 @@ function bmd(o){const X=(o.x-cx)*S,Y=(o.y-cy)*S;x.save();x.translate(X,Y);x.rota
 /* ---------- Heavy Knight — The Immovable Fortress ---------- */
 HI.k={n:'Heavy Knight',nf:1,pk:'knight',short:'The Immovable Fortress • ยิ่งเลือดเยอะยิ่งแรง',
   ps:'Execution Force: ตีปกติสร้างดาเมจเวทเพิ่ม 20–50% (ตามเลเวล) ของ HP ที่ศัตรูเสียไป มีเพดานต่อครั้ง • HP +60% เดินช้า 10%',
-  mc:[10,14,28],cc:[[12,12],[9,9],[45,45]],atk:'katk',ic:'k',
+  mc:[10,16,28],cc:[[12,12],[12,12],[45,45]],atk:'katk',ic:'k',
   sn:[['Crushing Advance','Crushing Advance','💥','💥'],['Dreadful Presence','Dreadful Presence','👁','👁'],['Unbreakable Fortress','Unbreakable Fortress','🏰','🏰']],
   sd:P2(['เสริมพลังโจมตีปกติครั้งถัดไป (ภายใน 5 วิ) พุ่งเข้าหาศัตรู ดาเมจเวทเพิ่ม = 35% ของ Max HP ตัวเอง (มีคูลดาวน์ 12 วิ กันเก็บบัฟไว้ใช้ต่อเนื่อง)',
-    'ปลดปล่อยออร่าเวทรอบตัว ดาเมจเวท AoE = 20% ของ Max HP ตัวเอง โดนศัตรูทุกตัวในรัศมี',
+    'ปลดปล่อยออร่าเวทต่อเนื่องรอบตัว 4 วิ ทุก 0.5 วิสร้างดาเมจเวท = 6% ของ Max HP ตัวเอง แก่ศัตรูทุกตัวในรัศมี (เต็มช่วง ≈ 48%) ออร่าติดตัวไปด้วยขณะเดิน',
     'ป้องกันสมบูรณ์ ไม่รับดาเมจ 5 วิ (เพิ่มตามเลเวลสกิล สูงสุด 10 วิ) เมื่อหมดเวลาสะท้อน 50% ของดาเมจที่สะสมเป็น AoE กายภาพ และตัวเองรับอีก 50%'])};
 HA.k=function(){const p=g.p;if(p.acd>0||p.dash)return;const e=near(p.ca>0?130:46);if(!e)return;p.a=M.atan2(e.y-p.y,e.x-p.x);const A=AT(),co=M.cos(p.a),si=M.sin(p.a),d=D(p,e);
   // Passive: ดาเมจเวท 20–50% ของ HP ที่ศัตรูเสียไป เพดาน 40% ของ Max HP ตัวเอง
@@ -519,8 +523,11 @@ HA.k=function(){const p=g.p;if(p.acd>0||p.dash)return;const e=near(p.ca>0?130:46
   swing(p.a,'#cfd8ff',34);p.lg=3;hit(e,A*1.1);pas();p.acd=.6/(1+AS())};
 HC.k=function(i,ang){const c=hpre(i,ang);if(!c)return;const{p}=c;p.mp-=c.mc;sfx(['c1','c2','c3'][i]);
   if(i==0){p.ca=5;p.cd[0]=12*CD();ring(p.x,p.y,30,'#cfd8ff');puff(p.x,p.y,16,'#cfd8ff',60,.6,1.4,0,1);say('Crushing Advance! โจมตีปกติครั้งถัดไปจะพุ่งเข้าฟัน')}
-  if(i==1){const L=1+.1*(p.sk[1]-1);p.cd[1]=9*CD();ring(p.x,p.y,72,'#b06cff');ring(p.x,p.y,44,'#fff');puff(p.x,p.y,34,'#b06cff',120,.6,1.6,0,1);SK=8;aoe(p.x,p.y,72,MH()*.2*L,null,1)}
+  if(i==1){p.cd[1]=12*CD();p.da={t:HKA.dur,n:0,L:1+.1*(p.sk[1]-1)};ring(p.x,p.y,HKA.r,'#b06cff');ring(p.x,p.y,HKA.r*.6,'#fff');puff(p.x,p.y,34,'#b06cff',120,.6,1.6,0,1);SK=6;say('Dreadful Presence! ออร่าเวทต่อเนื่อง '+HKA.dur+' วิ')}
   if(i==2){const dur=M.min(10,5+(p.sk[2]-1)*1.25);p.cd[2]=45*CD();p.fz={t:dur,acc:0};ring(p.x,p.y,50,'#fff');puff(p.x,p.y,30,'#e9f1f8',110,.7,1.6,0,1);SK=6;say('Unbreakable Fortress '+dur.toFixed(1)+' วิ')}};
+// ออร่าต่อเนื่อง: ทุก HKA.tick วิ ตีศัตรูทุกตัวในรัศมีรอบตัว (ตามตัวไปด้วย)
+function dpulse(){const o=NFX;NFX=1;try{dpulse0()}finally{NFX=o}}
+function dpulse0(){const p=g.p;if(!p.da)return;SK=2;ring(p.x,p.y,HKA.r,'#b06cff');puff(p.x,p.y,8,'#b06cff',HKA.r*1.4,.4,1.2,0,1);aoe(p.x,p.y,HKA.r,MH()*HKA.pct*p.da.L,null,1)}
 // จบสถานะอมตะ: สะท้อน 50% เป็น AoE กายภาพ อีก 50% ตัวเองรับ (ไม่ตาย เหลือ 1 HP ขั้นต่ำ)
 function fzEnd(){const p=g.p,f=p.fz;p.fz=null;if(!f||f.acc<1)return;const half=f.acc*.5;boom(p.x,p.y,90);aoe(p.x,p.y,90,half);p.hp=M.max(1,p.hp-half);hurtfx();say('ปลดปล่อย! สะท้อน '+(half|0)+' • รับกลับ '+(half|0))}
 
@@ -532,7 +539,7 @@ HI.d={n:'Decibus',nf:1,pk:'decibus',short:'Thunder Sovereign • จักรพ
   sn:[['Thunder Lance','Thunder Lance','🔱','🔱'],['Volt Rush','Volt Rush','⚡','⚡'],['Sovereign Judgment','Sovereign Judgment','🌩','🌩']],
   sd:P2(['ยิงหอกสายฟ้าเป็นเส้นตรง ทะลุศัตรูได้ ดาเมจเวท โดนศัตรูตัวแกร่ง/บอสได้ Charge เพิ่ม ถ้าโดนตัวเดิมซ้ำในเวลาสั้นดาเมจลดลง',
     'กลายเป็นกระแสไฟฟ้าพุ่งไปตามทิศ ดาเมจเวทระหว่างทาง ผ่านตัวศัตรูได้ ถ้าโดนศัตรูตัวแกร่ง/บอสได้โล่เล็กน้อยและลดคูลดาวน์ Skill 1 ลง 2 วิ',
-    '(สกิลเสนอ — เอกสารยังไม่ได้กำหนด) เรียกสายฟ้าฟาด 6 ครั้งลงพื้นที่เป้าหมาย ดาเมจเวท+สตั้นสั้น ๆ นับเป็นสกิลโจมตีเพิ่ม Charge'])};
+    'เรียกพายุสายฟ้าลงบนพื้นที่เป้าหมาย (รัศมี 80) ฟาดดาเมจเวทเป็นระลอก 5 ครั้ง ศัตรูในพื้นที่ถูกลดความเร็ว ระลอกสุดท้ายแรงกว่าเดิมมาก • Overcharge: ถ้ามี Electro Charge ครบ 5 Stack ก่อนใช้ จะเพิ่มเป็น 8 ระลอก ระลอกสุดท้ายแรงขึ้น และได้โล่ป้องกัน'])};
 // ได้ Charge จากสกิลที่โดน (ตัวแกร่งได้เพิ่ม) ครบ 5 แล้วฟาดซ้ำจะเกิดสายฟ้าลูกโซ่
 function dst(e,d){const p=g.p;if(p.hero!='d')return;if((p.ec||0)>=5){p.ec=0;chain(e,d*.8)}else p.ec=M.min(5,(p.ec||0)+1+(ISH(e)?1:0));ring(e.x,e.y,16,'#ffe14a')}
 function chain(e,d){let cur=e;const seen=[e];ring(e.x,e.y,34,'#fff');for(let j=0;j<4;j++){let nx=null,bd=120;g.en.forEach(z=>{if(!z.dead&&!seen.includes(z)){const dd=D(cur,z);if(dd<bd){bd=dd;nx=z}}});if(!nx)break;streak(cur.x,cur.y,nx.x,nx.y,'#ffe14a');hit(nx,d*(1-.1*j),0,1);seen.push(nx);cur=nx}SK=6;say('สายฟ้าลูกโซ่!')}
@@ -541,8 +548,16 @@ HC.d=function(i,ang){const c=hpre(i,ang);if(!c)return;const{p,e,co,si,A}=c;p.mp-
   if(i==0){p.cd[0]=6*CD();ring(p.x+co*12,p.y+si*12,20,'#ffe14a');SK=3;shoot({x:p.x,y:p.y,vx:co*340,vy:si*340,d:A*1.5,mg:1,k:'z',c:'#fff7a0',life:.55,r:7,pierce:1,dl:1,rd:1})}
   if(i==1){p.cd[1]=9*CD();const hl=[];streak(p.x,p.y,p.x+co*130,p.y+si*130,'#ffe14a');p.dash={vx:co*620,vy:si*620,t:.21};p.inv=.25;
     for(let k=0;k<6;k++)tmo(k*.04,()=>{g.en.forEach(z=>{if(z.dead||hl.includes(z)||D(z,g.p)>26)return;hl.push(z);hit(z,A*1.2,0,1);dst(z,A*1.2);if(ISH(z)){g.p.sh={hp:40+A*.8,t:4};g.p.cd[0]=M.max(0,g.p.cd[0]-2)}})})}
-  if(i==2){p.cd[2]=32*CD();const X=e?e.x:p.x+co*110,Y=e?e.y:p.y+si*110;ring(X,Y,72,'#ffe14a');
-    for(let k=0;k<6;k++)tmo(.5+k*.18,()=>{const x2=X+(R()-.5)*100,y2=Y+(R()-.5)*100;ring(x2,y2,30,'#fff');puff(x2,y2,14,'#ffe14a',110,.4,1.4,0,1);SK=5;g.en.forEach(z=>{if(z.dead||M.hypot(z.x-x2,z.y-y2)>34)return;hit(z,A*1.1,0,1);z.stun=M.max(z.stun||0,.35);dst(z,A*1.1)})})}};
+  if(i==2){const oc=(p.ec||0)>=5,N=oc?DST3.wavesOC:DST3.waves,X=e?e.x:p.x+co*110,Y=e?e.y:p.y+si*110,R=DST3.r;
+    p.cd[2]=32*CD();if(oc){p.ec=0;p.sh={hp:60+A*1.5,t:6}}                       // Overcharge: ใช้ Charge 5 Stack แลกกับระลอกเพิ่ม + ระลอกสุดท้ายแรงขึ้น + โล่
+    g.dst={x:X,y:Y,r:R,t:.5+N*DST3.gap+.7};ring(X,Y,R,'#ffe14a');ring(X,Y,R*.6,'#fff');SK=4;say(oc?'Overcharge! พายุสายฟ้า '+N+' ระลอก + โล่':'พายุสายฟ้า '+N+' ระลอก');
+    for(let k=0;k<N;k++)tmo(.5+k*DST3.gap,()=>storm(X,Y,R,A*DST3.w,0,k==0));
+    tmo(.5+N*DST3.gap+.15,()=>storm(X,Y,R,A*(oc?DST3.finOC:DST3.fin),1,1))}};
+// พายุสายฟ้า 1 ระลอก: ฟาดเวทศัตรูทุกตัวในวง + ลดความเร็ว (fin = ระลอกสุดท้าย ภาพใหญ่ขึ้น, gain = นับ Electro Charge)
+function storm(X,Y,R,d,fin,gain){const n=fin?7:3;for(let k=0;k<n;k++){const a=R*.9*M.sqrt(R_()),t=R_()*6.28,x2=X+M.cos(t)*a,y2=Y+M.sin(t)*a;streak(x2,y2-70,x2,y2,fin?'#fff':'#ffe14a');ring(x2,y2,fin?30:16,fin?'#fff':'#ffe14a');puff(x2,y2,fin?14:6,'#ffe14a',110,.4,1.4,0,1)}
+  if(fin){ring(X,Y,R,'#fff');SK=9}else SK=3;
+  g.en.forEach(z=>{if(z.dead||M.hypot(z.x-X,z.y-Y)>R)return;hit(z,d,0,1);z.sl=M.max(z.sl||0,.8);if(gain)dst(z,d)})}
+const R_=Math.random;
 
 /* ===== Enigma-03 — หุ่นยนต์รูปร่างมนุษย์ ===== */
 HI.n={n:'Enigma-03',nf:1,pk:'enigma',short:'หุ่นยนต์รูปร่างมนุษย์ ปืน 2 โหมด',
@@ -637,10 +652,14 @@ function hxn(dt){const p=g.p;
   if(g.lkT>0){g.lkT-=dt;if(g.lkT<=0||(g.lk&&g.lk.dead)){g.lk=null;g.lkT=0}}
   if(p.odt>0){p.odt-=dt;if(p.odt<=0){p.od=0;p.cd[0]=M.max(p.cd[0],4*CD())}}
   if(p.hero=='p'&&p.ci>0){p.cit=(p.cit||0)+dt;if(p.cit>3){p.cit=2.2;p.ci--}}
+  if(g.dst){g.dst.t-=dt;if(g.dst.t<=0)g.dst=null}
+  if(p.da){p.da.t-=dt;p.da.n-=dt;if(p.da.n<=0){p.da.n=HKA.tick;dpulse()}if(p.da.t<=0)p.da=null}
   kch(dt)}
 // วาดเพิ่ม: เป้าที่ล็อก (Enigma) และวงโล่ Fortress
 function hdraw(){const p=g.p;
+  if(g.dst){const s2=g.dst,X=(s2.x-cx)*S,Y=(s2.y-cy)*S;x.strokeStyle='rgba(255,225,74,'+(.35+.25*M.sin(g.t*14))+')';x.lineWidth=S*1.5;x.beginPath();x.arc(X,Y,s2.r*S,0,7);x.stroke()}
   if(g.lk&&!g.lk.dead){const e=g.lk,X=(e.x-cx)*S,Y=(e.y-cy)*S,r=(14+M.sin(g.t*8)*2)*S;x.strokeStyle='#3affff';x.lineWidth=S;x.beginPath();x.arc(X,Y,r,0,7);x.moveTo(X-r*1.5,Y);x.lineTo(X-r*.5,Y);x.moveTo(X+r*.5,Y);x.lineTo(X+r*1.5,Y);x.moveTo(X,Y-r*1.5);x.lineTo(X,Y-r*.5);x.moveTo(X,Y+r*.5);x.lineTo(X,Y+r*1.5);x.stroke()}
+  if(p.da){const X=(p.x-cx)*S,Y=(p.y-cy)*S,r=HKA.r*S;x.strokeStyle='rgba(176,108,255,'+(.35+.2*M.sin(g.t*12))+')';x.lineWidth=S*1.5;x.setLineDash([6*S,5*S]);x.lineDashOffset=-g.t*40*S;x.beginPath();x.arc(X,Y,r,0,7);x.stroke();x.setLineDash([])}
   if(p.fz){const X=(p.x-cx)*S,Y=(p.y-cy)*S;x.strokeStyle='rgba(255,255,255,'+(.5+.3*M.sin(g.t*10))+')';x.lineWidth=S*1.5;x.beginPath();x.arc(X,Y,18*S,0,7);x.stroke()}
   if(p.sh){const X=(p.x-cx)*S,Y=(p.y-cy)*S;x.strokeStyle='#ffe14a';x.lineWidth=S;x.beginPath();x.arc(X,Y,15*S,0,7);x.stroke()}}
 
